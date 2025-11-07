@@ -1,0 +1,14 @@
+{
+  "name": "point-program-electron",
+  "version": "1.0.0",
+  "description": "POINT PROGRAM packaged as an Electron app.",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "pack": "electron-packager . PointProgram --platform=win32 --arch=x64 --out=dist --overwrite"
+  },
+  "devDependencies": {
+    "electron": "^27.0.0",
+    "electron-packager": "^17.1.0"
+  }
+}

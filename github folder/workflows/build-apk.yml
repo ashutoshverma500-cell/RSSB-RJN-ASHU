@@ -1,0 +1,50 @@
+name: Build Cordova APK
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build-apk:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '11'
+
+      - name: Setup Android SDK
+        uses: r0adkll/setup-android@v2
+        with:
+          api-level: 31
+          build-tools: '31.0.0'
+          components: 'platform-tools;platforms;build-tools;extra-google-m2repository;extra-android-m2repository'
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install Cordova
+        run: npm install -g cordova@11
+
+      - name: Prepare Cordova project
+        run: |
+          cd cordova_android
+          # create platforms directory if missing and add android platform
+          cordova platform add android || true
+          cordova prepare android
+
+      - name: Build APK (debug)
+        run: |
+          cd cordova_android
+          cordova build android --debug
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: cordova-apk
+          path: cordova_android/platforms/android/app/build/outputs/apk/debug/**/*.apk
